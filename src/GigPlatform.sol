@@ -4,8 +4,17 @@ pragma solidity ^0.8.20;
 contract GigPlatform {
     address public arbiter;
 
-    enum Role { Arbiter, Client, Freelancer }
-    enum BountyStatus { Open, Locked, Completed, Cancelled }
+    enum Role {
+        Arbiter,
+        Client,
+        Freelancer
+    }
+    enum BountyStatus {
+        Open,
+        Locked,
+        Completed,
+        Cancelled
+    }
 
     struct User {
         string name;
@@ -54,11 +63,7 @@ contract GigPlatform {
         }
 
         users[msg.sender] = User({
-            name: _name,
-            role: _role,
-            ipfsAvatarHash: _ipfsAvatarHash,
-            reputationScore: repScore,
-            isRegistered: true
+            name: _name, role: _role, ipfsAvatarHash: _ipfsAvatarHash, reputationScore: repScore, isRegistered: true
         });
 
         emit UserRegistered(msg.sender, _name, _role);
@@ -89,10 +94,7 @@ contract GigPlatform {
         require(bounties[bountyId].status == BountyStatus.Open, "Bounty is not open");
         require(bidAmount <= bounties[bountyId].maxBudget, "Bid exceeds max budget");
 
-        bids[bountyId][msg.sender] = Bid({
-            amount: bidAmount,
-            exists: true
-        });
+        bids[bountyId][msg.sender] = Bid({amount: bidAmount, exists: true});
 
         emit BidSubmitted(bountyId, msg.sender, bidAmount);
     }
@@ -113,7 +115,7 @@ contract GigPlatform {
 
         if (msg.value > selectedBid.amount) {
             uint256 excess = msg.value - selectedBid.amount;
-            (bool success, ) = msg.sender.call{value: excess}("");
+            (bool success,) = msg.sender.call{value: excess}("");
             require(success, "Refund of excess ETH failed");
         }
 

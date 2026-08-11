@@ -20,9 +20,10 @@ contract GigPlatformTest is Test {
     function test_RegisterUser() public {
         vm.startPrank(client1);
         gigPlatform.registerUser("Alice", GigPlatform.Role.Client, "hash1");
-        (string memory name, GigPlatform.Role role, string memory hash, uint256 rep, bool isReg) = gigPlatform.users(client1);
+        (string memory name, GigPlatform.Role role, string memory hash, uint256 rep, bool isReg) =
+            gigPlatform.users(client1);
         assertEq(name, "Alice");
-        assertEq(uint(role), uint(GigPlatform.Role.Client));
+        assertEq(uint256(role), uint256(GigPlatform.Role.Client));
         assertEq(hash, "hash1");
         assertEq(rep, 0);
         assertTrue(isReg);
@@ -32,7 +33,7 @@ contract GigPlatformTest is Test {
         gigPlatform.registerUser("Bob", GigPlatform.Role.Freelancer, "hash2");
         (name, role, hash, rep, isReg) = gigPlatform.users(freelancer1);
         assertEq(name, "Bob");
-        assertEq(uint(role), uint(GigPlatform.Role.Freelancer));
+        assertEq(uint256(role), uint256(GigPlatform.Role.Freelancer));
         assertEq(hash, "hash2");
         assertEq(rep, 100);
         assertTrue(isReg);
@@ -52,11 +53,17 @@ contract GigPlatformTest is Test {
         gigPlatform.registerUser("Alice", GigPlatform.Role.Client, "hash1");
         gigPlatform.postBounty(1 ether, "bountyHash1");
 
-        (address client, uint256 maxBudget, string memory detailsHash, GigPlatform.BountyStatus status, address selected) = gigPlatform.bounties(0);
+        (
+            address client,
+            uint256 maxBudget,
+            string memory detailsHash,
+            GigPlatform.BountyStatus status,
+            address selected
+        ) = gigPlatform.bounties(0);
         assertEq(client, client1);
         assertEq(maxBudget, 1 ether);
         assertEq(detailsHash, "bountyHash1");
-        assertEq(uint(status), uint(GigPlatform.BountyStatus.Open));
+        assertEq(uint256(status), uint256(GigPlatform.BountyStatus.Open));
         assertEq(selected, address(0));
         assertEq(gigPlatform.bountyCount(), 1);
         vm.stopPrank();
@@ -106,8 +113,8 @@ contract GigPlatformTest is Test {
         vm.startPrank(client1);
         gigPlatform.fundBounty{value: 0.5 ether}(0, freelancer1);
 
-        (, , , GigPlatform.BountyStatus status, address selected) = gigPlatform.bounties(0);
-        assertEq(uint(status), uint(GigPlatform.BountyStatus.Locked));
+        (,,, GigPlatform.BountyStatus status, address selected) = gigPlatform.bounties(0);
+        assertEq(uint256(status), uint256(GigPlatform.BountyStatus.Locked));
         assertEq(selected, freelancer1);
         assertEq(address(gigPlatform).balance, 0.5 ether);
         vm.stopPrank();
@@ -130,8 +137,8 @@ contract GigPlatformTest is Test {
         gigPlatform.fundBounty{value: 0.8 ether}(0, freelancer1);
         uint256 balanceAfter = client1.balance;
 
-        (, , , GigPlatform.BountyStatus status, address selected) = gigPlatform.bounties(0);
-        assertEq(uint(status), uint(GigPlatform.BountyStatus.Locked));
+        (,,, GigPlatform.BountyStatus status, address selected) = gigPlatform.bounties(0);
+        assertEq(uint256(status), uint256(GigPlatform.BountyStatus.Locked));
         assertEq(selected, freelancer1);
         assertEq(address(gigPlatform).balance, 0.5 ether);
         // User should have spent exactly 0.5 ether, despite sending 0.8 ether

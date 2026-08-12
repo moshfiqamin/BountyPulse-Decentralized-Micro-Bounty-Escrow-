@@ -7,13 +7,11 @@ import {GigPlatform} from "../src/GigPlatform.sol";
 contract GigPlatformTest is Test {
     GigPlatform public gigPlatform;
 
-    address arbiter = address(1);
     address client1 = address(2);
     address freelancer1 = address(3);
     address freelancer2 = address(4);
 
     function setUp() public {
-        vm.prank(arbiter);
         gigPlatform = new GigPlatform();
     }
 

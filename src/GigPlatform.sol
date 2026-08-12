@@ -2,8 +2,6 @@
 pragma solidity ^0.8.20;
 
 contract GigPlatform {
-    address public arbiter;
-
     enum Role {
         Arbiter,
         Client,
@@ -48,10 +46,6 @@ contract GigPlatform {
     event BountyPosted(uint256 indexed bountyId, address indexed client, uint256 maxBudget);
     event BidSubmitted(uint256 indexed bountyId, address indexed freelancer, uint256 bidAmount);
     event BountyFunded(uint256 indexed bountyId, address indexed freelancer, uint256 amount);
-
-    constructor() {
-        arbiter = msg.sender;
-    }
 
     function registerUser(string memory _name, Role _role, string memory _ipfsAvatarHash) external {
         require(!users[msg.sender].isRegistered, "User already registered");

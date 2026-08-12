@@ -1,0 +1,1 @@
+- 2024-XX-XX: In `GigPlatform.sol`, read-only dynamically sized string parameters in external functions (`registerUser` and `postBounty`) were using `memory`. Changing them to `calldata` avoids expensive intermediate memory allocations. Average gas for `registerUser` dropped from 121174 to 120557. Average gas for `postBounty` dropped from 121551 to 121270.

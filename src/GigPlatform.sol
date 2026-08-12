@@ -87,12 +87,16 @@ contract GigPlatform {
     }
 
     function submitBid(uint256 bountyId, uint256 bidAmount) external {
-        require(users[msg.sender].isRegistered, "User not registered");
-        require(users[msg.sender].role == Role.Freelancer, "Only Freelancers can bid");
-        require(users[msg.sender].reputationScore >= 40, "Reputation score too low");
+        User storage user = users[msg.sender];
+        require(user.isRegistered, "User not registered");
+        require(user.role == Role.Freelancer, "Only Freelancers can bid");
+        require(user.reputationScore >= 40, "Reputation score too low");
+
         require(bountyId < bountyCount, "Bounty does not exist");
-        require(bounties[bountyId].status == BountyStatus.Open, "Bounty is not open");
-        require(bidAmount <= bounties[bountyId].maxBudget, "Bid exceeds max budget");
+
+        Bounty storage bounty = bounties[bountyId];
+        require(bounty.status == BountyStatus.Open, "Bounty is not open");
+        require(bidAmount <= bounty.maxBudget, "Bid exceeds max budget");
 
         bids[bountyId][msg.sender] = Bid({amount: bidAmount, exists: true});
 

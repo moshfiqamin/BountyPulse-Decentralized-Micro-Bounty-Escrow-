@@ -53,7 +53,7 @@ contract GigPlatform {
         arbiter = msg.sender;
     }
 
-    function registerUser(string memory _name, Role _role, string memory _ipfsAvatarHash) external {
+    function registerUser(string calldata _name, Role _role, string calldata _ipfsAvatarHash) external {
         require(!users[msg.sender].isRegistered, "User already registered");
         require(_role == Role.Client || _role == Role.Freelancer, "Can only register as Client or Freelancer");
 
@@ -69,7 +69,7 @@ contract GigPlatform {
         emit UserRegistered(msg.sender, _name, _role);
     }
 
-    function postBounty(uint256 maxBudget, string memory ipfsBountyDetailsHash) external {
+    function postBounty(uint256 maxBudget, string calldata ipfsBountyDetailsHash) external {
         require(users[msg.sender].isRegistered, "User not registered");
         require(users[msg.sender].role == Role.Client, "Only Client can post bounties");
 

@@ -1,0 +1,1 @@
+- Cached mapping values in `submitBid` into storage pointers (`users[msg.sender]` and `bounties[bountyId]`) avoiding repeated SLOAD operations, saving gas.

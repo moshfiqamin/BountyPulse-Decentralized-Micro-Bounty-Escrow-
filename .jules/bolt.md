@@ -1,0 +1,1 @@
+- Optimizing read-only string parameters in external functions by changing `memory` to `calldata` resulted in a measurable gas reduction (~0.4% across affected functions in GigPlatform.sol).

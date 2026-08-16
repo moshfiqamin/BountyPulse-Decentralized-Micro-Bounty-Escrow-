@@ -99,7 +99,7 @@ contract GigPlatform {
         emit BidSubmitted(bountyId, msg.sender, bidAmount);
     }
 
-    function fundBounty(uint256 bountyId, address freelancer) external payable {
+    function fundBounty(uint256 bountyId, address freelancer, uint256 expectedBidAmount) external payable {
         require(bountyId < bountyCount, "Bounty does not exist");
         Bounty storage bounty = bounties[bountyId];
         require(msg.sender == bounty.client, "Only the client can fund this bounty");
@@ -107,6 +107,8 @@ contract GigPlatform {
 
         Bid memory selectedBid = bids[bountyId][freelancer];
         require(selectedBid.exists, "Bid does not exist for this freelancer");
+
+        require(selectedBid.amount == expectedBidAmount, "Bid amount has changed");
 
         require(msg.value >= selectedBid.amount, "Sent ETH is less than the bid amount");
 

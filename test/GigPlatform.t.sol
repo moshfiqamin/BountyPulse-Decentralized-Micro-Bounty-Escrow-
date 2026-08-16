@@ -111,7 +111,7 @@ contract GigPlatformTest is Test {
 
         vm.deal(client1, 2 ether);
         vm.startPrank(client1);
-        gigPlatform.fundBounty{value: 0.5 ether}(0, freelancer1);
+        gigPlatform.fundBounty{value: 0.5 ether}(0, freelancer1, 0.5 ether);
 
         (,,, GigPlatform.BountyStatus status, address selected) = gigPlatform.bounties(0);
         assertEq(uint256(status), uint256(GigPlatform.BountyStatus.Locked));
@@ -134,7 +134,7 @@ contract GigPlatformTest is Test {
         vm.deal(client1, 2 ether);
         vm.startPrank(client1);
         uint256 balanceBefore = client1.balance;
-        gigPlatform.fundBounty{value: 0.8 ether}(0, freelancer1);
+        gigPlatform.fundBounty{value: 0.8 ether}(0, freelancer1, 0.5 ether);
         uint256 balanceAfter = client1.balance;
 
         (,,, GigPlatform.BountyStatus status, address selected) = gigPlatform.bounties(0);
@@ -160,7 +160,31 @@ contract GigPlatformTest is Test {
         vm.deal(client1, 2 ether);
         vm.startPrank(client1);
         vm.expectRevert("Sent ETH is less than the bid amount");
-        gigPlatform.fundBounty{value: 0.4 ether}(0, freelancer1);
+        gigPlatform.fundBounty{value: 0.4 ether}(0, freelancer1, 0.5 ether);
+        vm.stopPrank();
+    }
+
+    function test_RevertIf_BidAmountChanged() public {
+        vm.startPrank(client1);
+        gigPlatform.registerUser("Alice", GigPlatform.Role.Client, "hash1");
+        gigPlatform.postBounty(1 ether, "bountyHash1");
+        vm.stopPrank();
+
+        vm.startPrank(freelancer1);
+        gigPlatform.registerUser("Bob", GigPlatform.Role.Freelancer, "hash2");
+        gigPlatform.submitBid(0, 0.5 ether);
+        vm.stopPrank();
+
+        // freelancer front-runs and updates bid to 1 ether
+        vm.startPrank(freelancer1);
+        gigPlatform.submitBid(0, 1 ether);
+        vm.stopPrank();
+
+        vm.deal(client1, 2 ether);
+        vm.startPrank(client1);
+        vm.expectRevert("Bid amount has changed");
+        // client intended to fund 0.5 ether bid
+        gigPlatform.fundBounty{value: 1 ether}(0, freelancer1, 0.5 ether);
         vm.stopPrank();
     }
 }
